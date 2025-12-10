@@ -4,15 +4,20 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>acidtide</title>
+
+  <!-- css -->
   <link rel="stylesheet" href="style.css">
+
+  <!-- p5.js library -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.1/p5.min.js"></script>
 </head>
 <body>
   <h1>acidtide</h1>
+
   <div id="controls">
     <label>year: <span id="yearDisplay">2025</span></label>
     <input type="range" id="yearSlider" min="1900" max="2100" value="2025">
-    
+
     <label>scenario:</label>
     <select id="scenarioSelect">
       <option value="optimistic">optimistic</option>
@@ -26,6 +31,7 @@
     <p><span id="coralStatus"></span></p>
   </div>
 
+  <!-- js -->
   <script src="script.js"></script>
 </body>
 </html>

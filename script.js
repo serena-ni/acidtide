@@ -43,17 +43,18 @@ function draw() {
   let scenario = scenarioSelect.value();
   let ph = calculatePH(year, scenario);
 
-  // dynamic ocean gradient based on pH
-  let colorFactor = map(ph, 7.6, 8.2, 50, 255);
-  setGradient(0, 0, width, height, color(0, 50, 150), color(0, 119, 182 + colorFactor*0.5));
+  // soft ocean gradient
+  let topColor = color(204, 231, 240);
+  let bottomColor = color(135, 200, 232);
+  setGradient(0, 0, width, height, topColor, bottomColor);
 
-  // subtle animated waves
+  // S-shaped waves
   drawWaves(ph);
 
-  // draw coral
+  // coral
   drawCoral(ph);
 
-  // draw plankton
+  // plankton
   drawPlankton(ph);
 }
 
@@ -88,33 +89,37 @@ function setGradient(x, y, w, h, c1, c2){
   }
 }
 
-// animated waves
+// draw S-shaped waves
 function drawWaves(ph){
-  waveOffset += 0.02;
-  let waveAmplitude = map(ph, 7.6, 8.2, 30, 10);
-  fill(0, 150, 200, 100);
-  beginShape();
-  for(let x=0; x<=width; x+=10){
-    let y = height*0.6 + sin(x*0.02 + waveOffset)*waveAmplitude;
-    vertex(x, y);
+  waveOffset += 0.03;
+  let waveHeight = map(ph, 7.6, 8.2, 35, 10);
+  let waveCount = 3;
+
+  for(let i=0; i<waveCount; i++){
+    let yBase = height*0.6 + i*15;
+    fill(255, 255, 255, 50 + i*20);
+    beginShape();
+    for(let x=0; x<=width; x+=10){
+      let y = yBase + sin((x*0.02) + waveOffset + i)*waveHeight;
+      vertex(x, y);
+    }
+    vertex(width, height);
+    vertex(0, height);
+    endShape(CLOSE);
   }
-  vertex(width, height);
-  vertex(0, height);
-  endShape(CLOSE);
 }
 
-// draw coral using triangles
+// coral using triangles
 function drawCoral(ph){
   let coralX = width/2;
   let coralY = height*0.7;
   if(ph < 7.9){
     coralStatus.html('coral status: bleached');
-    fill(255, 230, 230);
+    fill(255, 200, 210);
   } else {
     coralStatus.html('coral status: healthy');
-    fill(255, 150, 100);
+    fill(255, 165, 120);
   }
-  // simple coral made of overlapping triangles
   for(let i=0; i<5; i++){
     triangle(coralX - 40 + i*15, coralY,
              coralX + i*10, coralY - 50 - i*10,
@@ -122,11 +127,11 @@ function drawCoral(ph){
   }
 }
 
-// draw plankton as small circles with smooth motion
+// smooth plankton
 function drawPlankton(ph){
   for(let p of planktonParticles){
     p.y += p.speed;
-    p.x += sin(frameCount*0.01 + p.offset)*0.5; // subtle side drift
+    p.x += sin(frameCount*0.01 + p.offset)*0.5; // subtle drift
     if(p.y > height/2) p.y = 0;
     if(p.x < 0) p.x = width;
     if(p.x > width) p.x = 0;

@@ -1,37 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>acidtide</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>tidelines</title>
 
-  <!-- css -->
-  <link rel="stylesheet" href="style.css">
+  <!-- p5.js -->
+  <script src="https://cdn.jsdelivr.net/npm/p5@1.9.3/lib/p5.min.js"></script>
 
-  <!-- p5.js library -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.1/p5.min.js"></script>
+  <!-- CSS -->
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h1>acidtide</h1>
+  <h1>tidelines</h1>
+
+  <div id="sketch-holder"></div>
 
   <div id="controls">
-    <label>year: <span id="yearDisplay">2025</span></label>
-    <input type="range" id="yearSlider" min="1900" max="2100" value="2025">
+    <label>
+      year
+      <input id="yearSlider" type="range" min="1950" max="2100" value="2025" />
+      <span id="yearDisplay">2025</span>
+    </label>
 
-    <label>scenario:</label>
-    <select id="scenarioSelect">
-      <option value="optimistic">optimistic</option>
-      <option value="realistic" selected>realistic</option>
-      <option value="worst">worst case</option>
-    </select>
+    <label>
+      scenario
+      <select id="scenarioSelect">
+        <option value="optimistic">optimistic</option>
+        <option value="realistic" selected>realistic</option>
+        <option value="severe">severe</option>
+      </select>
+    </label>
+
+    <button id="applyBtn">apply</button>
   </div>
 
   <div id="info">
-    <p>ocean pH: <span id="phDisplay"></span></p>
-    <p><span id="coralStatus"></span></p>
+    ocean surface pH: <span id="phDisplay">8.05</span>
   </div>
 
-  <!-- js -->
+  <footer>
+    hack club axiom · build wild math & science
+  </footer>
+
+  <!-- JS -->
   <script src="script.js"></script>
 </body>
 </html>

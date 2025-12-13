@@ -115,8 +115,41 @@ button:hover {
 }
 
 footer {
-  margin-top: 1.2rem;
+  margin-top: 2rem;
+  text-align: center;
   font-size: 0.75rem;
   letter-spacing: 0.08em;
   color: #7f9eab;
+}
+
+#infoBtn {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.7);
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: var(--text-main);
+  z-index: 10;
+}
+
+#infoBox {
+  position: fixed;
+  top: 60px;
+  right: 16px;
+  width: 240px;
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(8px);
+  border-radius: 12px;
+  padding: 12px;
+  font-size: 0.8rem;
+  line-height: 1.3rem;
+  color: var(--text-main);
+  display: none;
+  z-index: 10;
 }

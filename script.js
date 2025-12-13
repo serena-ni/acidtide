@@ -1,6 +1,7 @@
 let time = 0
 let appliedYear = 2025
 let appliedScenario = 'realistic'
+let displayPH = 8.05
 
 const BASE_YEAR = 1900
 const BASE_CO2 = 280
@@ -11,7 +12,7 @@ const WAVE_LAYERS = 3
 let yearSlider, yearDisplay, scenarioSelect, phDisplay
 
 function setup() {
-  // create canvas
+  // create canvas and attach to sketch holder
   const cnv = createCanvas(windowWidth, windowHeight * 0.5)
   cnv.parent('sketch-holder')
   noStroke()
@@ -22,11 +23,23 @@ function setup() {
   scenarioSelect = select('#scenarioSelect')
   phDisplay = select('#phDisplay')
 
-  // setup event listeners
+  // setup event listeners for slider, scenario, and apply button
   yearSlider.input(previewUI)
   scenarioSelect.changed(previewUI)
   select('#applyBtn').mousePressed(applyChanges)
 
+  // setup info button toggle
+  const infoBtn = select('#infoBtn')
+  const infoBox = select('#infoBox')
+  infoBtn.mousePressed(() => {
+    if (infoBox.style('display') === 'none') {
+      infoBox.style('display', 'block')
+    } else {
+      infoBox.style('display', 'none')
+    }
+  })
+
+  // initialize ui display
   previewUI()
 }
 
@@ -34,20 +47,24 @@ function draw() {
   // update time for smooth motion
   time = millis() * 0.001
 
-  // compute ph based on applied year and scenario
+  // compute target ph based on applied year and scenario
   const co2 = computeCO2(appliedYear, appliedScenario)
-  const ph = computePH(co2)
+  const targetPH = computePH(co2)
+
+  // smooth transition for displayed ph
+  displayPH = lerp(displayPH, targetPH, 0.02)
+  const ph = displayPH
 
   // draw background and waves
   drawBackground()
   drawWaves(ph)
 
-  // update ph display
+  // update ph display in ui
   phDisplay.html(ph.toFixed(2))
 }
 
 function drawBackground() {
-  // draw gradient sky/water background
+  // draw gradient background for sky and water
   for (let y = 0; y < height; y++) {
     const t = map(y, 0, height, 0, 1)
     stroke(lerpColor(color(215, 237, 247), color(150, 210, 235), t))
@@ -57,21 +74,25 @@ function drawBackground() {
 }
 
 function drawWaves(ph) {
-  // draw layered sine waves with parallax
+  // draw layered sine waves with parallax and color based on ph
   const baseY = height * 0.52
-  const calmness = map(ph, 7.6, 8.2, 1.3, 0.75)
+  const calmness = map(ph, 7.6, 8.2, 2.0, 0.5) // more visible effect
 
   for (let layer = 0; layer < WAVE_LAYERS; layer++) {
     const depth = layer / (WAVE_LAYERS - 1)
-    const amplitude = 45 * calmness * (1 - depth * 0.4)
+    const amplitude = 45 * calmness * (0.6 + 0.4 * (1 - depth)) // keep upper layers visible
     const wavelength = 0.015 + depth * 0.006
     const speed = 0.4 + (1 - depth) * 0.5
     const offsetY = depth * 28
-    const alpha = lerp(160, 60, depth)
+    const alpha = lerp(160, 60, depth) * 0.7
+
+    // calculate wave color with slight variation per layer
+    const baseColor = lerpColor(color(180, 220, 245), color(100, 160, 210), map(ph, 7.6, 8.2, 0, 1))
+    const waveColor = lerpColor(baseColor, color(255, 255, 255), depth * 0.25)
 
     // draw wave line
     noFill()
-    stroke(255, alpha + 40)
+    stroke(waveColor.levels[0], waveColor.levels[1], waveColor.levels[2], alpha + 40)
     strokeWeight(2.5)
     beginShape()
     for (let x = -60; x <= width + 60; x += 8) {
@@ -80,9 +101,9 @@ function drawWaves(ph) {
     }
     endShape()
 
-    // fill under wave
+    // fill area under wave
     noStroke()
-    fill(255, alpha)
+    fill(waveColor.levels[0], waveColor.levels[1], waveColor.levels[2], alpha)
     beginShape()
     for (let x = -60; x <= width + 60; x += 8) {
       const y = baseY + offsetY + sin(x * wavelength + time * speed) * amplitude
@@ -95,23 +116,23 @@ function drawWaves(ph) {
 }
 
 function computeCO2(year, scenario) {
-  // simple exponential growth of co2
+  // compute CO2 based on year and scenario using exponential growth
   const t = year - BASE_YEAR
   return BASE_CO2 * Math.pow(1 + SCENARIOS[scenario], t)
 }
 
 function computePH(co2) {
-  // convert co2 to ph with limits
+  // convert CO2 concentration to pH with limits
   return constrain(BASE_PH - 0.001 * (co2 - BASE_CO2), 7.6, 8.2)
 }
 
 function previewUI() {
-  // update year display while sliding
+  // update displayed year while sliding
   yearDisplay.html(yearSlider.value())
 }
 
 function applyChanges() {
-  // apply new year and scenario values
+  // apply slider and scenario values to simulation
   appliedYear = int(yearSlider.value())
   appliedScenario = scenarioSelect.value()
 }

@@ -16,8 +16,6 @@ acidtide is an interactive ocean acidification simulation built with p5.js. It v
 ## Technical Details
 
 * Built with [p5.js](https://p5js.org/) for canvas drawing and animation.
-* Responsive design adapts to window width.
-* Wave layers use sine functions for smooth motion, with amplitude and wavelength modulated by ocean pH.
 * pH is calculated from CO₂ using a simple exponential growth model and converted to a constrained pH value.
 
 ## Credits
